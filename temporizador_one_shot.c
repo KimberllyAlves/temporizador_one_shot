@@ -14,41 +14,34 @@ bool led_active = false;    // Indica se o LED está atualmente aceso (para evit
 // Função de callback para desligar o LED após o tempo programado.
 int64_t turn_off_callback(alarm_id_t id, void *user_data) {
 
-     if (led_on == 0) { 
-        gpio_put(LED_PIN_R, true);
-        gpio_put(LED_PIN_Y, false);
-        gpio_put(LED_PIN_G, false);
+    //Led vermelho desligado
+    if (led_on == 0) {
+        gpio_put(LED_PIN_R, false);
         led_on = 1;
+        add_alarm_in_ms(3000, turn_off_callback, NULL, false); // Agenda o próximo desligamento
     }
-    //Led amarelo ligado
-    else if (led_on == 1) {
-        gpio_put(LED_PIN_Y, true);
-        gpio_put(LED_PIN_G, false);
-        gpio_put(LED_PIN_R, false);
-        led_on = 2;
-    }
-    //Led verde ligado
-    else  {
-        gpio_put(LED_PIN_G, true);
-        gpio_put(LED_PIN_R, false);
+    //Led amarelo desligado
+    else if (led_on ==1 ) {
         gpio_put(LED_PIN_Y, false);
+        led_on = 2;
+        add_alarm_in_ms(3000, turn_off_callback, NULL, false); // Agenda o próximo desligamento
+    }
+    else {
+        gpio_put(LED_PIN_G, false);
         led_on = 0;
+        // Atualiza o estado de 'led_active' para falso, indicando que o LED está desligado.
+        led_active = false;
     }
 
-    // Atualiza o estado de 'led_active' para falso, indicando que o LED está desligado.
-    led_active = false;
-
-    // Retorna 0 para indicar que o alarme não deve se repetir.
     return 0;
 }
 
 int main() {
+
     // Inicializa a comunicação serial para permitir o uso de printf.
-    // Isso é útil para depuração, embora não seja usado neste exemplo.
     stdio_init_all();
 
     // Configura os pinos dos LEDS como saída digital.
-
     gpio_init(LED_PIN_R);
     gpio_set_dir(LED_PIN_R,GPIO_OUT);
     gpio_init(LED_PIN_Y);
@@ -62,7 +55,6 @@ int main() {
     gpio_set_dir(BUTTON_PIN, GPIO_IN);
 
     // Habilita o resistor pull-up interno para o pino do botão.
-    // Isso garante que o pino seja lido como alto (3,3 V) quando o botão não está pressionado.
     gpio_pull_up(BUTTON_PIN);
 
     // Loop principal do programa que verifica continuamente o estado do botão.
@@ -74,12 +66,12 @@ int main() {
 
             // Verifica novamente o estado do botão após o debounce.
             if (gpio_get(BUTTON_PIN) == 0) {
-                // Liga o LED configurando o pino LED_PIN_Y para nível alto.
-                gpio_put(LED_PIN_Y, true);
-
                 // Define 'led_active' como true para indicar que o LED está aceso.
                 led_active = true;
-
+                //Ativando todos os leds
+                gpio_put(LED_PIN_R, true);
+                gpio_put(LED_PIN_Y, true);
+                gpio_put(LED_PIN_G, true);
                 // Agenda um alarme para desligar o LED após 3 segundos (3000 ms).
                 // A função 'turn_off_callback' será chamada após esse tempo.
                 add_alarm_in_ms(3000, turn_off_callback, NULL, false);
@@ -87,11 +79,8 @@ int main() {
         }
 
         // Introduz uma pequena pausa de 10 ms para reduzir o uso da CPU.
-        // Isso evita que o loop seja executado muito rapidamente e consuma recursos desnecessários.
         sleep_ms(10);
     }
-
-    // Retorno de 0, que nunca será alcançado devido ao loop infinito.
-    // Isso é apenas uma boa prática em programas com um ponto de entrada main().
+    
     return 0;
 }
