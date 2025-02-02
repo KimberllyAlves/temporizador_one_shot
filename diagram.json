@@ -1,0 +1,76 @@
+{
+  "version": 1,
+  "author": "Kimberlly Alves Santos",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-pi-pico-w", "id": "pico", "top": -80.05, "left": 109.15, "attrs": {} },
+    {
+      "type": "wokwi-led",
+      "id": "led1",
+      "top": -13.2,
+      "left": -34.6,
+      "attrs": { "color": "red" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led2",
+      "top": 63.6,
+      "left": -34.6,
+      "attrs": { "color": "green" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led3",
+      "top": 25.2,
+      "left": -34.6,
+      "attrs": { "color": "yellow" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r1",
+      "top": 61.85,
+      "left": -1.4,
+      "rotate": 180,
+      "attrs": { "value": "330" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r2",
+      "top": 23.45,
+      "left": -1.4,
+      "rotate": 180,
+      "attrs": { "value": "330" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r3",
+      "top": 100.25,
+      "left": -1.4,
+      "rotate": 180,
+      "attrs": { "value": "330" }
+    },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "btn1",
+      "top": -51.4,
+      "left": 28.8,
+      "attrs": { "color": "black" }
+    }
+  ],
+  "connections": [
+    [ "pico:GP0", "$serialMonitor:RX", "", [] ],
+    [ "pico:GP1", "$serialMonitor:TX", "", [] ],
+    [ "led1:A", "r2:2", "red", [ "v0" ] ],
+    [ "pico:GP13", "r2:1", "red", [ "h-19.2", "v-86.36" ] ],
+    [ "r1:2", "led3:A", "gold", [ "v0" ] ],
+    [ "r3:2", "led2:A", "green", [ "v0" ] ],
+    [ "pico:GND.4", "led1:C", "black", [ "h-19.2", "v38.44", "h-134.4", "v-134.4" ] ],
+    [ "pico:GP11", "r1:1", "gold", [ "h-28.8", "v-28.8" ] ],
+    [ "pico:GP12", "r3:1", "green", [ "h-28.8", "v28.84" ] ],
+    [ "pico:GND.1", "btn1:1.r", "black", [ "h0" ] ],
+    [ "pico:GP5", "btn1:2.r", "green", [ "h-19.2", "v-19.2" ] ],
+    [ "led2:C", "pico:GND.4", "black", [ "h-18.8", "v28.8", "h134.4", "v-38.44" ] ],
+    [ "led3:C", "pico:GND.4", "black", [ "v0", "h-18.8", "v67.2", "h134.4", "v-38.4" ] ]
+  ],
+  "dependencies": {}
+}
